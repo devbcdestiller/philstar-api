@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 from .datetime_manager import get_timestamp
 import requests
 import unicodedata
-import datetime
 
 
 def get_soup(url):
@@ -19,7 +18,7 @@ def get_raw_news(soup, class_name):
 
 
 def get_article(tree, category):
-    print(tree)
+
     content_url = tree.a['href']
     content_doc = requests.get(content_url)
     if content_doc.status_code == 404:
@@ -54,10 +53,10 @@ def get_article(tree, category):
     return article
 
 
-def get_articles():
+def get_articles(debug=False):
     url = 'https://www.philstar.com/'
-    categories = ['headlines', 'opinion', 'nation', 'world', 'business', 'sports', 'entertainment', 'lifestyle']
-    # categories = ['world']
+    #categories = ['headlines', 'opinion', 'nation', 'world', 'business', 'sports', 'entertainment', 'lifestyle']
+    categories = ['headlines']
     class_names = ['titleForFeature', 'news_title', 'carousel__item__title']
     articles = []
 
@@ -71,6 +70,9 @@ def get_articles():
                 continue
 
             for tree in trees:
+                if debug:
+                    print(tree)
+
                 article = get_article(tree, category)
                 if not article:
                     continue

@@ -19,16 +19,18 @@ months = {'January': 1,
 def get_timestamp(input_string):
     strings = re.split(r',|:|\|| ', input_string)
     temp = [s for s in strings if s]
+
     y = int(temp[2])
     m = months[temp[0]]
     d = int(temp[1])
-    h = int(temp[3]) if 'am' in temp[4] else int(temp[3]) + 12
-    h = 0
+    h = int(temp[3])
+
+    if (h == 12) and ('am' in temp[4]):
+        h = int(temp[3]) + 12
+    elif (h < 12) and ('pm' in temp[4]):
+        h = int(temp[3]) + 12
+
+    h = 0 if h == 24 else h
     mm = int(re.sub(r'am|pm', '', temp[4]))
 
-    result = datetime(y, m, d, h, mm).timestamp()
-    print(result)
-
-    return result
-
-print(get_timestamp('March 23, 2022 | 12:05pm'))
+    return datetime(y, m, d, h, mm).timestamp()

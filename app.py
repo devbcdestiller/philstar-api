@@ -4,6 +4,8 @@ from packages.db import db
 from packages import crawler
 import os
 
+DEBUG = True
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'news.db')
@@ -31,15 +33,20 @@ def db_drop():
 
 @app.cli.command('db_seed')
 def db_seed():
-    articles = crawler.get_articles()
+    articles = crawler.get_articles(debug=DEBUG)
 
     for article in articles:
+        test = News.query.filter_by(title=article['title']).first()
+        if test:
+            continue
+
         a = News(title=article['title'],
                  author=article['author'],
                  image=article['image'],
                  snippet=article['snippet'],
                  content=article['content'],
-                 category=article['category']
+                 category=article['category'],
+                 date_published=article['date_published']
                  )
 
         db.session.add(a)
@@ -64,4 +71,4 @@ article_schema = NewsSchema()
 articles_schema = NewsSchema(many=True)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=DEBUG)

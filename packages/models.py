@@ -16,5 +16,4 @@ class News(db.Model):
 
 class NewsSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'title', 'author', 'image', 'snippet', 'content', 'category',
-                  'date_published')
+        fields = ('id', 'title', 'author', 'image', 'snippet', 'content', 'category', 'date_published')
