@@ -11,8 +11,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'news.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
-
-categories = ['headlines', 'opinion', 'nation', 'world', 'business', 'sports', 'entertainment', 'lifestyle']
+# print(os.path.exists(os.path.join(basedir, 'news.db')))
 
 
 def update_db():
@@ -55,9 +54,18 @@ def db_seed():
     print('database seeded!')
 
 
+@app.route('/fetch_article/<string:input_category>', methods=['GET'])
+def fetch_category(input_category: str):
+    if input_category not in crawler.categories:
+        return jsonify(message="Request must either in the list of categories: ['headlines', 'opinion', 'nation', "
+                               "'world', 'business', 'sports', 'entertainment', 'lifestyle']"), 406
+
+    return jsonify(crawler.fetch_article(input_category, debug=DEBUG))
+
+
 @app.route('/category/<string:input_category>', methods=['GET'])
 def category(input_category: str):
-    if input_category not in categories:
+    if input_category not in crawler.categories:
         return jsonify(message="Request must either in the list of categories: ['headlines', 'opinion', 'nation', "
                                "'world', 'business', 'sports', 'entertainment', 'lifestyle']"), 406
 
@@ -69,6 +77,12 @@ def category(input_category: str):
 
 article_schema = NewsSchema()
 articles_schema = NewsSchema(many=True)
+
+
+@app.cli.command('test')
+def test():
+    crawler.test()
+
 
 if __name__ == '__main__':
     app.run(debug=DEBUG)
