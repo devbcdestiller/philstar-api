@@ -18,14 +18,6 @@ def get_soup(url):
     return BeautifulSoup(html_doc.text, 'html.parser')
 
 
-def get_raw_news(soup, class_name):
-    if not soup.find_all(class_=f'{class_name}'):
-        return False
-
-    res = soup.find_all(class_=f'{class_name}')
-    return res
-
-
 def get_article(tree, category):
     content_url = tree.a['href']
     content_doc = requests.get(content_url)
@@ -104,7 +96,7 @@ def test():
         trees = soup.find_all(class_=class_names)
 
         for tree in trees:
-            article = test_get_article(tree, category)
+            article = get_article(tree, category)
 
             if not article:
                 continue

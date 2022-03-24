@@ -18,6 +18,11 @@ def update_db():
     db_seed()
 
 
+@app.cli.command('test')
+def test():
+    crawler.test()
+
+
 @app.cli.command('db_create')
 def db_create():
     db.create_all()
@@ -77,11 +82,6 @@ def category(input_category: str):
 
 article_schema = NewsSchema()
 articles_schema = NewsSchema(many=True)
-
-
-@app.cli.command('test')
-def test():
-    crawler.test()
 
 
 if __name__ == '__main__':
